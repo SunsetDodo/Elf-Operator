@@ -5,11 +5,12 @@ TagManager:
   serializedVersion: 3
   tags:
   - DropArea
+  - ElfManager
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - AcceptButtons
+  - DropArea
   - Water
   - UI
   - 

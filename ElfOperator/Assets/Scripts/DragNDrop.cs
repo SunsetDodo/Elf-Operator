@@ -8,27 +8,25 @@ using UnityEngine.EventSystems;
 [RequireComponent(typeof(Collider2D))]
 public class DragNDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
-    private Vector2 originPosition;
+    private Vector3 _originPosition;
+    private Camera _cam;
+    private bool _isDragged;
     
     [SerializeField] private float followSpeed;
     [SerializeField] private float acceleration;
-
-    public bool isDragged;
-    Camera cam;
     
-    public List<string> whitelistTags = new List<string>();
-    public UnityEvent<GameObject> onSuccessfulDrop;
+    public UnityEvent onSuccessfulDrop;
     
     private void Start()
     {
-        originPosition = transform.position;
-        cam = Camera.main;
+        _originPosition = transform.position;
+        _cam = Camera.main;
     }
 
     private void Update()
     {
-        if (!isDragged) return;
-        Vector2 mousePos = cam.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+        if (!_isDragged) return;
+        Vector2 mousePos = _cam.ScreenToWorldPoint(Mouse.current.position.ReadValue());
         var distance = Vector2.Distance(transform.position, mousePos);
         var speedMultiplier = acceleration * distance * Time.deltaTime;
         var direction = (mousePos - (Vector2)transform.position).normalized;
@@ -38,24 +36,24 @@ public class DragNDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     
     public void OnPointerDown(PointerEventData eventData)
     {
-        isDragged = true;
+        _isDragged = true;
         Debug.Log("OnPointerDown " + gameObject.name);
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        isDragged = false;
+        _isDragged = false;
         if (Camera.main == null) return;
         Vector2 mousePos = Camera.main.ScreenToWorldPoint(eventData.position);
-        var hit = Physics2D.Raycast(mousePos, Vector2.zero);
+        var hit = Physics2D.Raycast(mousePos, Vector2.zero, 100f, LayerMask.GetMask("DropArea"));
 
-        if (hit.collider == null || !whitelistTags.Contains(hit.transform.tag)) return;
+        if (hit.collider == null) return;
         
-        onSuccessfulDrop?.Invoke(gameObject);
+        onSuccessfulDrop?.Invoke();
     }
 
     public void ResetPosition()
     {
-        transform.position = originPosition;
+        transform.position = _originPosition;
     }
 }
