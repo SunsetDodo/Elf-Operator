@@ -22,11 +22,13 @@ public class Mapper : MonoBehaviour
     [SerializeField] private Tilemap tilemap;
     [SerializeField] private Vector2Int offset = new Vector2Int(1, 1);
     
-    private Dictionary<Vector2, BlockType> _blockTypes = new Dictionary<Vector2, BlockType>();
-    
-    void Start()
+    private Dictionary<Vector2Int, BlockType> _blockTypes;
+    private List<Vector2Int> _goblinPositions;
+
+    public void Setup(List<Vector2Int> startingPositions)
     {
-        
+        _goblinPositions = startingPositions;
+        _blockTypes = new Dictionary<Vector2Int, BlockType>();
         for (var x = tilemap.cellBounds.xMin; x < tilemap.cellBounds.xMax; x++)
         {
             for (var y = tilemap.cellBounds.yMin; y < tilemap.cellBounds.yMax; y++)
@@ -52,15 +54,36 @@ public class Mapper : MonoBehaviour
             }
         }
     }
-
-    public BlockType GetBlockType(Vector2 position)
+    
+    public void UpdateGoblinPosition(int index, Vector2Int goblinPosition)
     {
-        return _blockTypes.ContainsKey(position) ? _blockTypes[position] : BlockType.Air;
+        _goblinPositions[index] = goblinPosition;
     }
 
-    // Update is called once per frame
-    void Update()
+    public bool IsSolid(Vector2Int position)
     {
+        if (_goblinPositions.Contains(position))
+        {
+            return true;
+        }
         
+        _blockTypes.TryGetValue(position, out var blockType);
+        return  blockType == BlockType.Solid;
+        
+        
+    }
+    
+    public BlockType GetBlockType(Vector2Int position)
+    {
+        if (_blockTypes.ContainsKey(position))
+        {
+            return _blockTypes[position];
+        }
+        if (_goblinPositions.Contains(position))
+        {
+            return BlockType.Solid;
+        }
+        
+        return BlockType.Air;
     }
 }

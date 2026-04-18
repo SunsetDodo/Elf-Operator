@@ -33,6 +33,8 @@ public class GoblinManager : MonoBehaviour
     [SerializeField] private Operation bundle3;
     
     [SerializeField] private List<GameObject> buttons;
+
+    [SerializeField] private MovementSolver solver;
     private Dictionary<GameObject, Operation> _inventory;
     
     
@@ -58,7 +60,7 @@ public class GoblinManager : MonoBehaviour
         {
             ["walk_right"] = -1,
             ["walk_left"] = 2,
-            ["jump_right"] = 5,
+            ["jump_right"] = -1,
             ["jump_left"] = 2,
             ["bundle_2"] = 1,
             ["climb_up"] = -1,
@@ -122,6 +124,7 @@ public class GoblinManager : MonoBehaviour
                 case "jump_right":
                     jumpRight.count = count;
                     jumpRight.isEnabled = true;
+                    jumpRight.onUse.AddListener(solver.ProcessJumpRight);
                     _inventory[buttons[i++]] = jumpRight;
                     break;
                 case "climb_down":
