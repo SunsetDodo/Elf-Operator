@@ -99,3 +99,5 @@ InitTestScene*.unity*
 /ElfOperator/[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
 
 ElfOperator/Packages/com.singularitygroup.hotreload/
+
+ElfOperator/.idea/
