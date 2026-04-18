@@ -16,7 +16,7 @@ public struct Operation
     public UnityEvent onUse;
 }
 
-public class ElfManager : MonoBehaviour
+public class GoblinManager : MonoBehaviour
 {
     
     [SerializeField] private float singleDigitFontSize;
@@ -33,17 +33,9 @@ public class ElfManager : MonoBehaviour
     [SerializeField] private Operation bundle3;
     
     [SerializeField] private List<GameObject> buttons;
-    private Dictionary<GameObject, Operation> _inventory = new Dictionary<GameObject, Operation>();
+    private Dictionary<GameObject, Operation> _inventory;
     
-    // Walk + Jump - false = left, true = right
-    public UnityEvent<bool> onWalk;
-    public UnityEvent<bool> onJump;
     
-    // Climb - false = down, true = up
-    public UnityEvent<bool> onClimb;
-    
-    public UnityEvent<int> onPromptBundle;
-
     public void ProcessButton(GameObject button)
     {
         if (!_inventory.ContainsKey(button)) return;

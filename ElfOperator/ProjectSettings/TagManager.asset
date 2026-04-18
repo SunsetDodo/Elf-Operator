@@ -6,6 +6,7 @@ TagManager:
   tags:
   - DropArea
   - ElfManager
+  - Goblin
   layers:
   - Default
   - TransparentFX
