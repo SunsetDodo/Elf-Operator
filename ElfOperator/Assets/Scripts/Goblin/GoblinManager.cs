@@ -98,6 +98,7 @@ public class GoblinManager : MonoBehaviour
     private void InitInventory(SortedDictionary<string, int> inventory)
     {
         var i = 0;
+        _inventory = new Dictionary<GameObject, Operation>();
         foreach (var (opStr, count) in inventory)
         {
             Debug.Log(opStr + " " + count);

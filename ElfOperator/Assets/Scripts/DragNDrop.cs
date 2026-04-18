@@ -32,6 +32,7 @@ public class DragNDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         var direction = (mousePos - (Vector2)transform.position).normalized;
         
         transform.Translate(followSpeed * speedMultiplier * direction);
+        transform.position =  new Vector3(transform.position.x, transform.position.y, _originPosition.z - 0.1f);
     }
     
     public void OnPointerDown(PointerEventData eventData)
@@ -47,7 +48,11 @@ public class DragNDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         Vector2 mousePos = Camera.main.ScreenToWorldPoint(eventData.position);
         var hit = Physics2D.Raycast(mousePos, Vector2.zero, 100f, LayerMask.GetMask("DropArea"));
 
-        if (hit.collider == null) return;
+        if (hit.collider == null)
+        {
+            ResetPosition();
+            return;
+        }
         
         onSuccessfulDrop?.Invoke();
     }
