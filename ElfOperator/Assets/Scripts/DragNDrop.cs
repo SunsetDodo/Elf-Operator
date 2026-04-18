@@ -53,4 +53,9 @@ public class DragNDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         
         onSuccessfulDrop?.Invoke(gameObject);
     }
+
+    public void ResetPosition()
+    {
+        transform.position = originPosition;
+    }
 }
