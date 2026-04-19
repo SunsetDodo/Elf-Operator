@@ -69,8 +69,18 @@ public class Mapper : MonoBehaviour
         
         _blockTypes.TryGetValue(position, out var blockType);
         return  blockType == BlockType.Solid;
+    }
+
+    public bool IsSolidSkipGoblin(Vector2Int position, int goblinIndex)
+    {
+        Debug.Log(position);
+        if (_goblinPositions.Contains(position) && _goblinPositions.IndexOf(position) != goblinIndex)
+        {
+            return true;
+        }
         
-        
+        _blockTypes.TryGetValue(position, out var blockType);
+        return  blockType == BlockType.Solid;
     }
     
     public BlockType GetBlockType(Vector2Int position)
