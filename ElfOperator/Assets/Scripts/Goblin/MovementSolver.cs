@@ -122,64 +122,64 @@ public class MovementSolver : MonoBehaviour
         }
     }
     
-    private List<Vector2> SimulateJump(Vector2 start, Vector2 end, float maxHeight, int goblinIndex, float fixedStep = 1f / 60f)
-{
-    Vector2 actualEnd;
-
-    // DONT ASK ME WHY IT NEEDS SPECIAL TREATMENT IDK!!!!! BUT IT DOESNT WORK WITHOUT IT
-    if (Mathf.Approximately(start.x, end.x))
+    private List<Vector2> SimulateJump(Vector2 start, Vector2 end, float maxHeight, int goblinIndex, float fixedStep = 1f / 60f) 
     {
-        actualEnd = new Vector2(start.x, start.y);
-    }
-    else
-    {
-        var tx = Mathf.RoundToInt(end.x);
-        var ty = Mathf.FloorToInt(end.y - 0.01f); 
-        var safetyLimit = 100;
+        Vector2 actualEnd;
 
-        while (safetyLimit > 0 && !mapper.IsSolidSkipGoblin(new Vector2Int(tx, ty), goblinIndex))
+        // DONT ASK ME WHY IT NEEDS SPECIAL TREATMENT IDK!!!!! BUT IT DOESNT WORK WITHOUT IT
+        if (Mathf.Approximately(start.x, end.x))
         {
-            ty--;
-            safetyLimit--;
+            actualEnd = new Vector2(start.x, start.y);
         }
-        actualEnd = new Vector2(end.x, ty + 1);
-    }
-
-    var vy = Mathf.Sqrt(2f * gravityUp * maxHeight);
-    var timeUp = vy / gravityUp;
-    var apexY = start.y + maxHeight;
-    var fallDistance = Mathf.Max(0f, apexY - actualEnd.y);
-    var timeDown = Mathf.Sqrt(2f * fallDistance / gravityDown);
-    var vx = (actualEnd.x - start.x) / (timeUp + timeDown);
-
-    var frames = new List<Vector2>();
-    var pos = start;
-    var velocity = new Vector2(vx, vy);
-
-    for (var i = 0; i < 1000; i++)
-    {
-        if (velocity.y <= 0 && pos.y <= actualEnd.y + 0.001f)
+        else
         {
-            frames.Add(actualEnd);
-            break;
+            var tx = Mathf.RoundToInt(end.x);
+            var ty = Mathf.FloorToInt(end.y - 0.01f); 
+            var safetyLimit = 100;
+
+            while (safetyLimit > 0 && !mapper.IsSolidSkipGoblin(new Vector2Int(tx, ty), goblinIndex))
+            {
+                ty--;
+                safetyLimit--;
+            }
+            actualEnd = new Vector2(end.x, ty + 1);
         }
 
-        frames.Add(pos);
+        var vy = Mathf.Sqrt(2f * gravityUp * maxHeight);
+        var timeUp = vy / gravityUp;
+        var apexY = start.y + maxHeight;
+        var fallDistance = Mathf.Max(0f, apexY - actualEnd.y);
+        var timeDown = Mathf.Sqrt(2f * fallDistance / gravityDown);
+        var vx = (actualEnd.x - start.x) / (timeUp + timeDown);
 
-        if (velocity.x != 0f && Mathf.Abs(pos.x - actualEnd.x) < Mathf.Abs(velocity.x * fixedStep))
+        var frames = new List<Vector2>();
+        var pos = start;
+        var velocity = new Vector2(vx, vy);
+
+        for (var i = 0; i < 1000; i++)
         {
-            pos.x = actualEnd.x;
-            velocity.x = 0f;
-        }
-        
-        float currentGravity = (velocity.y > 0) ? gravityUp : gravityDown;
-        velocity.y -= currentGravity * fixedStep;
-        pos += velocity * fixedStep;
-    }
+            if (velocity.y <= 0 && pos.y <= actualEnd.y + 0.001f)
+            {
+                frames.Add(actualEnd);
+                break;
+            }
 
-    //DebugDrawTrajectory(frames);
-    return frames;
-}
+            frames.Add(pos);
+
+            if (velocity.x != 0f && Mathf.Abs(pos.x - actualEnd.x) < Mathf.Abs(velocity.x * fixedStep))
+            {
+                pos.x = actualEnd.x;
+                velocity.x = 0f;
+            }
+            
+            float currentGravity = (velocity.y > 0) ? gravityUp : gravityDown;
+            velocity.y -= currentGravity * fixedStep;
+            pos += velocity * fixedStep;
+        }
+
+        //DebugDrawTrajectory(frames);
+        return frames;
+    }
 
     private void DebugDrawTrajectory(List<Vector2> frames)
     {
